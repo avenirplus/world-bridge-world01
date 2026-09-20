@@ -42,6 +42,20 @@ jobs:
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "Some plastic goes into rivers and reaches the ocean." --write-media audio/oral-02.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "Sea animals can be hurt by plastic waste." --write-media audio/oral-03.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "Governments, businesses, and people can work together to reduce the problem." --write-media audio/oral-04.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Plastic is convenient. People use it every day." --write-media audio/oral-v2-01.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Some plastic becomes waste and is not collected properly." --write-media audio/oral-v2-02.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "It eventually reaches rivers and the ocean." --write-media audio/oral-v2-03.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Animals may mistake plastic for food. It can harm them." --write-media audio/oral-v2-04.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Governments and citizens can reduce waste by using reusable items and separating trash." --write-media audio/oral-v2-05.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "waste" --write-media audio/vocab-waste.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "properly" --write-media audio/vocab-properly.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "eventually" --write-media audio/vocab-eventually.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "mistake A for B" --write-media audio/vocab-mistake.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "harm" --write-media audio/vocab-harm.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "reduce" --write-media audio/vocab-reduce.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "reusable" --write-media audio/vocab-reusable.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "separate" --write-media audio/vocab-separate.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "citizen" --write-media audio/vocab-citizen.mp3
 
           # Full reading: one fixed MP3 per sentence so the page can highlight the sentence being read
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "Plastic waste is a serious problem in many cities around the world." --write-media audio/read-01.mp3
