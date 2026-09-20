@@ -1,5 +1,6 @@
 // Vocabulary bridge layer for WORLD 01
 const vocabBridgeWords = [
+  {word:'convenient',img:'hero.png',icon:'👍',context:'Plastic is convenient.',choices:['便利な','危険な','高価な'],correct:0,en:'easy and useful for you',ja:'便利な・都合のよい',audio:'audio/vocab-convenient.mp3'},
   {word:'waste',img:'story.png',icon:'🗑️',context:'Some plastic becomes waste.',choices:['ごみ・廃棄物','海流','商品'],correct:0,en:'things that are no longer wanted and are thrown away',ja:'ごみ・廃棄物',audio:'audio/vocab-waste.mp3'},
   {word:'properly',img:'story.png',icon:'✅',context:'Plastic is not collected properly.',choices:['正しく・適切に','急に','たくさん'],correct:0,en:'in the right or correct way',ja:'正しく・適切に',audio:'audio/vocab-properly.mp3'},
   {word:'eventually',img:'story.png',icon:'➡️',context:'It eventually reaches the ocean.',choices:['最終的には','すぐに','たぶん'],correct:0,en:'in the end, after some time',ja:'最終的には・やがて',audio:'audio/vocab-eventually.mp3'},
