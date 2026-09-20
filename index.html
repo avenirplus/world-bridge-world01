@@ -26,8 +26,9 @@ const screens=[
  {label:'WORLD 01 COMPLETE',img:'complete.png',ey:'WORLD 01 COMPLETE',title:'You can read<br>this world now.',jp:'知らなかった世界が、英語で読める世界になった。',tags:['plastic waste','environment','reduce','protect','government'],complete:true}
 ];
 let page=0,chosen=null,utter=null; const app=document.getElementById('app');
+if('speechSynthesis' in window){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices()}
 function stop(){if('speechSynthesis' in window){window.speechSynthesis.cancel()} utter=null}
-function pickVoice(lang){if(!('speechSynthesis' in window))return null;const vs=window.speechSynthesis.getVoices()||[];const p=lang.toLowerCase().split('-')[0];return vs.find(v=>v.lang&&v.lang.toLowerCase()===lang.toLowerCase())||vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith(p))||null}
+function pickVoice(lang){if(!('speechSynthesis' in window))return null;const vs=window.speechSynthesis.getVoices()||[];const want=(lang||'').toLowerCase();const base=want.split('-')[0];if(base==='en'){const enUS=vs.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('en-us'));const preferred=['Samantha','Ava','Allison','Susan','Zoe','Tom'];for(const name of preferred){const hit=enUS.find(v=>v.name&&v.name.toLowerCase().includes(name.toLowerCase()));if(hit)return hit}if(enUS.length)return enUS[0]}return vs.find(v=>v.lang&&v.lang.toLowerCase()===want)||vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith(base))||null}
 function speak(text,lang='en-US'){if(!text)return;if(!('speechSynthesis' in window)){alert('このブラウザでは音声読み上げを利用できません。Chrome または Safari で開いてください。');return}const synth=window.speechSynthesis;synth.cancel();utter=new SpeechSynthesisUtterance(text);utter.lang=lang;utter.rate=0.82;utter.pitch=1;utter.volume=1;const v=pickVoice(lang);if(v)utter.voice=v;synth.resume();synth.speak(utter)}
 function speakCurrent(){const s=screens[page];speak(s.listen||s.english||'','en-US')}
 function speakHelp(){const s=screens[page];speak(s.help||'','ja-JP')}
