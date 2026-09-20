@@ -25,14 +25,63 @@ const screens=[
  {label:'Summary',img:'environment.png',ey:'ONE-SENTENCE SUMMARY',title:'Which sentence tells<br>the main idea?',choices:['Plastic waste can cause environmental problems, so people are trying to reduce it.','Plastic waste always disappears in rivers.','Sea animals produce plastic waste.'],listen:'Plastic waste can cause environmental problems, so people are trying to reduce it.'},
  {label:'WORLD 01 COMPLETE',img:'complete.png',ey:'WORLD 01 COMPLETE',title:'You can read<br>this world now.',jp:'知らなかった世界が、英語で読める世界になった。',tags:['plastic waste','environment','reduce','protect','government'],complete:true}
 ];
-let page=0,chosen=null,utter=null; const app=document.getElementById('app');
-if('speechSynthesis' in window){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices()}
-function stop(){if('speechSynthesis' in window){window.speechSynthesis.cancel()} utter=null}
-function pickVoice(lang){if(!('speechSynthesis' in window))return null;const vs=window.speechSynthesis.getVoices()||[];const want=(lang||'').toLowerCase();const base=want.split('-')[0];if(base==='en'){const enUS=vs.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('en-us'));const preferred=['Samantha','Ava','Allison','Susan','Zoe','Tom'];for(const name of preferred){const hit=enUS.find(v=>v.name&&v.name.toLowerCase().includes(name.toLowerCase()));if(hit)return hit}if(enUS.length)return enUS[0]}return vs.find(v=>v.lang&&v.lang.toLowerCase()===want)||vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith(base))||null}
-function speak(text,lang='en-US'){if(!text)return;if(!('speechSynthesis' in window)){alert('このブラウザでは音声読み上げを利用できません。Chrome または Safari で開いてください。');return}const synth=window.speechSynthesis;synth.cancel();utter=new SpeechSynthesisUtterance(text);utter.lang=lang;utter.rate=0.82;utter.pitch=1;utter.volume=1;const v=pickVoice(lang);if(v)utter.voice=v;synth.resume();synth.speak(utter)}
-function speakCurrent(){const s=screens[page];speak(s.listen||s.english||'','en-US')}
-function speakHelp(){const s=screens[page];speak(s.help||'','ja-JP')}
-function render(){stop();chosen=null;const s=screens[page], pct=(page+1)/15*100;app.innerHTML=`<header class="top"><div class="topline"><button class="back" onclick="go(-1)" ${page===0?'disabled':''}>‹</button><span>WORLD BRIDGE</span><span>${page+1}/15</span></div><div class="progress"><i style="width:${pct}%"></i></div></header><section class="screen ${s.complete?'complete':''} ${page===0?'center':''}">${s.img?`<div class="visual"><img src="${s.img}" alt=""></div>`:''}<div class="card"><div class="eyebrow">${s.ey}</div><h1 class="title">${s.title}</h1>${s.jp?`<p class="jp">${s.jp}</p>`:''}${s.english?`<div class="english">${s.english}</div>`:''}${s.tags?`<div class="tags">${s.tags.map(x=>`<span class="tag">${x}</span>`).join('')}</div>`:''}${s.choices?`<div class="choices">${s.choices.map((x,i)=>`<button class="choice" data-i="${i}" onclick="choose(this,${i})">${x}</button>`).join('')}</div>`:''}${s.input?`<div class="small">STEP 1　行動を選ぶ</div><select class="input" id="act"><option>use fewer plastic bags</option><option>use a reusable bottle</option><option>pick up litter</option></select><div class="small">STEP 2　英文を作る</div><div class="english" id="idea">I think we should use fewer plastic bags because they create plastic waste.</div><button class="listen" onclick="speak(document.getElementById('idea').innerText)">🔊 Listen</button>`:''}${s.listen?`<button class="listen" onclick="speakCurrent()">🔊 Listen</button>`:''}${s.help?`<details class="helper"><summary>▱ 日本語HELP</summary><div>${s.help}</div><button class="listen" onclick="speakHelp()">🔊 日本語を聞く</button></details>`:''}</div><div class="bottom">${page>0?'<button class="nav secondary" onclick="go(-1)">戻る</button>':''}${page===0?'<button class="nav" onclick="go(1)">はじめる →</button>':page===14?'<button class="nav" onclick="page=0;render()">もう一度見る</button>':'<button class="nav" onclick="go(1)">次へ →</button>'}</div></section>`}
+let page=0,chosen=null,player=null; const app=document.getElementById('app');
+
+const audioMap={
+  0:'audio/01-entry.mp3',
+  1:'audio/02-discover.mp3',
+  3:'audio/04-river.mp3',
+  4:'audio/05-ocean.mp3',
+  6:'audio/07-plastic-waste.mp3',
+  8:'audio/09-new-english.mp3',
+  10:'audio/11-target-reading.mp3',
+  13:'audio/14-summary.mp3'
+};
+const helpAudioMap={
+  0:'audio/01-help-ja.mp3',
+  1:'audio/02-help-ja.mp3',
+  3:'audio/04-help-ja.mp3',
+  4:'audio/05-help-ja.mp3'
+};
+const ideaTextMap={
+  'use fewer plastic bags':'I think we should use fewer plastic bags because they can reduce plastic waste.',
+  'use a reusable bottle':'I think we should use a reusable bottle because it can reduce plastic waste.',
+  'pick up litter':'I think we should pick up litter because it can protect the environment.'
+};
+const ideaAudioMap={
+  'use fewer plastic bags':'audio/13-fewer-bags.mp3',
+  'use a reusable bottle':'audio/13-reusable-bottle.mp3',
+  'pick up litter':'audio/13-pick-up-litter.mp3'
+};
+
+function stop(){
+  if(player){
+    player.pause();
+    player.currentTime=0;
+  }
+  player=null;
+}
+function playAudio(src){
+  if(!src)return;
+  stop();
+  player=new Audio(src);
+  player.preload='auto';
+  player.play().catch(()=>alert('音声を再生できませんでした。もう一度ボタンを押してください。'));
+}
+function playCurrent(){playAudio(audioMap[page])}
+function playHelp(){playAudio(helpAudioMap[page])}
+function updateIdea(){
+  const act=document.getElementById('act');
+  const idea=document.getElementById('idea');
+  if(!act||!idea)return;
+  idea.textContent=ideaTextMap[act.value]||'';
+}
+function playIdea(){
+  const act=document.getElementById('act');
+  if(!act)return;
+  playAudio(ideaAudioMap[act.value]);
+}
+function render(){stop();chosen=null;const s=screens[page], pct=(page+1)/15*100;app.innerHTML=`<header class="top"><div class="topline"><button class="back" onclick="go(-1)" ${page===0?'disabled':''}>‹</button><span>WORLD BRIDGE</span><span>${page+1}/15</span></div><div class="progress"><i style="width:${pct}%"></i></div></header><section class="screen ${s.complete?'complete':''} ${page===0?'center':''}">${s.img?`<div class="visual"><img src="${s.img}" alt=""></div>`:''}<div class="card"><div class="eyebrow">${s.ey}</div><h1 class="title">${s.title}</h1>${s.jp?`<p class="jp">${s.jp}</p>`:''}${s.english?`<div class="english">${s.english}</div>`:''}${s.tags?`<div class="tags">${s.tags.map(x=>`<span class="tag">${x}</span>`).join('')}</div>`:''}${s.choices?`<div class="choices">${s.choices.map((x,i)=>`<button class="choice" data-i="${i}" onclick="choose(this,${i})">${x}</button>`).join('')}</div>`:''}${s.input?`<div class="small">STEP 1　行動を選ぶ</div><select class="input" id="act" onchange="updateIdea()"><option>use fewer plastic bags</option><option>use a reusable bottle</option><option>pick up litter</option></select><div class="small">STEP 2　英文を作る</div><div class="english" id="idea">I think we should use fewer plastic bags because they can reduce plastic waste.</div><button class="listen" onclick="playIdea()">🔊 Listen</button>`:''}${s.listen?`<button class="listen" onclick="playCurrent()">🔊 Listen</button>`:''}${s.help?`<details class="helper"><summary>▱ 日本語HELP</summary><div>${s.help}</div><button class="listen" onclick="playHelp()">🔊 日本語を聞く</button></details>`:''}</div><div class="bottom">${page>0?'<button class="nav secondary" onclick="go(-1)">戻る</button>':''}${page===0?'<button class="nav" onclick="go(1)">はじめる →</button>':page===14?'<button class="nav" onclick="page=0;render()">もう一度見る</button>':'<button class="nav" onclick="go(1)">次へ →</button>'}</div></section>`}
 function choose(el,i){chosen=i;document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected','correct','wrong'));el.classList.add('selected');const correct={2:0,5:0,7:2,11:0,13:0}[page]; if(correct===i)el.classList.add('correct'); else if(correct!==undefined)el.classList.add('wrong')}
 function go(n){page=Math.max(0,Math.min(14,page+n));render();window.scrollTo(0,0)}
 render();
