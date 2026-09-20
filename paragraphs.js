@@ -142,7 +142,7 @@ function paraPracticeHtml(u){
     u.practice.map(function(idx,pi){
       const x=reading[idx];
       return '<div class="practice-row" data-track="pp'+u.n+pi+'">'+
-        '<div class="practice-text">'+chunkText(x.text).replaceAll(" / "," <span class=\\"slash\\">/</span> ")+'</div>'+
+        '<div class="practice-text">'+chunkText(x.text).replaceAll(" / ",' <span class="slash">/</span> ')+'</div>'+
         '<div class="practice-actions">'+
           '<button class="line-audio" onclick="playOne(\''+x.audio+'\',\'pp'+u.n+pi+'\',0.86)">🔊 聞く</button>'+
           '<button class="rep" data-count="0" onclick="practiceRep(this)">音読 0/3</button>'+
