@@ -1,0 +1,69 @@
+name: Generate furigana data
+
+on:
+  push:
+    paths:
+      - "app.js"
+      - "vocab.js"
+      - "paragraphs.js"
+      - "support.js"
+      - ".github/workflows/generate-furigana.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Japanese reading tool
+        run: pip install pykakasi
+      - name: Build furigana dictionary
+        shell: python
+        run: |
+          import re, json
+          from pathlib import Path
+          from pykakasi import kakasi
+
+          conv = kakasi()
+          texts = []
+          for name in ["app.js","vocab.js","paragraphs.js","support.js","index.html"]:
+              p = Path(name)
+              if p.exists():
+                  texts.append(p.read_text(encoding="utf-8"))
+
+          raw = "\n".join(texts)
+          chunks = re.findall(r"[ぁ-んァ-ンー一-龯々〆ヵヶ]+", raw)
+          terms = {}
+
+          for chunk in chunks:
+              if not re.search(r"[一-龯々〆ヵヶ]", chunk):
+                  continue
+              try:
+                  parts = conv.convert(chunk)
+              except Exception:
+                  continue
+              for part in parts:
+                  orig = part.get("orig","")
+                  hira = part.get("hira","")
+                  if orig and hira and re.search(r"[一-龯々〆ヵヶ]", orig):
+                      terms.setdefault(orig, hira)
+
+          # Prefer longer matches at runtime.
+          ordered = dict(sorted(terms.items(), key=lambda kv: (-len(kv[0]), kv[0])))
+          out = "window.FURIGANA_TERMS = " + json.dumps(ordered, ensure_ascii=False, indent=2) + ";\n"
+          Path("furigana-data.js").write_text(out, encoding="utf-8")
+      - name: Commit furigana data
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add furigana-data.js
+          git diff --cached --quiet || git commit -m "Update furigana data"
+          git pull --rebase origin main
+          git push
