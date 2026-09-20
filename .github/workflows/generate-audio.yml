@@ -37,6 +37,26 @@ jobs:
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "I think we should use a reusable bottle because it can reduce plastic waste." --write-media audio/13-reusable-bottle.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "I think we should pick up litter because it can protect the environment." --write-media audio/13-pick-up-litter.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "Plastic waste can cause environmental problems, so people are trying to reduce it." --write-media audio/14-summary.mp3
+          # Oral Introduction: 4 visual steps
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "People use plastic every day." --write-media audio/oral-01.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Some plastic goes into rivers and reaches the ocean." --write-media audio/oral-02.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Sea animals can be hurt by plastic waste." --write-media audio/oral-03.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Governments, businesses, and people can work together to reduce the problem." --write-media audio/oral-04.mp3
+
+          # Full reading: one fixed MP3 per sentence so the page can highlight the sentence being read
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Plastic waste is a serious problem in many cities around the world." --write-media audio/read-01.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "People use plastic bags, bottles, and food containers every day because they are light, cheap, and convenient." --write-media audio/read-02.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "However, some of these items are used only once and then thrown away." --write-media audio/read-03.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "When plastic is not collected properly, it can enter rivers and eventually reach the ocean." --write-media audio/read-04.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Sea animals may mistake small pieces of plastic for food, and this can harm them." --write-media audio/read-05.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Many governments are trying to reduce this problem." --write-media audio/read-06.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Some cities charge people for plastic bags, while others ask stores to use paper or reusable materials." --write-media audio/read-07.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Governments can also improve waste collection systems and teach people how to recycle correctly." --write-media audio/read-08.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "However, rules alone are not enough." --write-media audio/read-09.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Businesses can design products that use less plastic, and customers can choose reusable bottles or shopping bags." --write-media audio/read-10.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "People can also pick up litter in their neighborhoods and separate waste at home." --write-media audio/read-11.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "To protect rivers, oceans, and animals, governments, businesses, and citizens need to work together." --write-media audio/read-12.mp3
+
 
           edge-tts --voice ja-JP-NanamiNeural --rate=-5% --text "今日は、とてもいい天気。" --write-media audio/01-help-ja.mp3
           edge-tts --voice ja-JP-NanamiNeural --rate=-5% --text "見て！" --write-media audio/02-help-ja.mp3
