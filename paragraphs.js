@@ -160,3 +160,26 @@ bodyHtml=function(s){
 };
 
 render();
+
+
+storyboardHtml=function(){
+  return '<div class="oral-map">'+
+    '<div class="oral-row">'+
+      '<div class="oral-node" data-track="oral0"><img src="hero.png" alt=""><b>1 USE</b><span>Plastic is convenient.</span></div>'+
+      '<div class="oral-arrow">→</div>'+
+      '<div class="oral-node" data-track="oral1"><img src="story.png" alt=""><b>2 WASTE</b><span>Some plastic becomes waste.</span></div>'+
+    '</div>'+
+    '<div class="oral-down">↓</div>'+
+    '<div class="oral-row">'+
+      '<div class="oral-node" data-track="oral2"><img src="story.png" alt=""><b>3 RIVER → OCEAN</b><span>It eventually reaches the ocean.</span></div>'+
+      '<div class="oral-arrow">→</div>'+
+      '<div class="oral-node" data-track="oral3"><img src="environment.png" alt=""><b>4 ANIMALS</b><span>It can harm animals.</span></div>'+
+    '</div>'+
+    '<div class="oral-down">↓</div>'+
+    '<div class="oral-node oral-wide" data-track="oral4"><img src="government.png" alt=""><b>5 SOLUTIONS</b><span>Governments and citizens can reduce waste.</span></div>'+
+  '</div>'+
+  '<div class="track-controls"><button class="listen" onclick="playSequence(oral,\'oral\',0.92)">▶ Listen & Watch</button></div>'+
+  '<p class="bridge-note">まず「使う → ごみ → 川・海 → 動物 → 解決」という文章全体の流れを、1枚の地図のようにつかみます。難しい語はここでは意味を予想するだけでOK。</p>';
+};
+
+render();
