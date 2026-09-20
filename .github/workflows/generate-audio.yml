@@ -47,6 +47,7 @@ jobs:
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "It eventually reaches rivers and the ocean." --write-media audio/oral-v2-03.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "Animals may mistake plastic for food. It can harm them." --write-media audio/oral-v2-04.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "Governments and citizens can reduce waste by using reusable items and separating trash." --write-media audio/oral-v2-05.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "convenient" --write-media audio/vocab-convenient.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "waste" --write-media audio/vocab-waste.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "properly" --write-media audio/vocab-properly.mp3
           edge-tts --voice en-US-JennyNeural --rate=-8% --text "eventually" --write-media audio/vocab-eventually.mp3
