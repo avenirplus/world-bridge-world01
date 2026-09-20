@@ -2,6 +2,15 @@
 // Apply ruby furigana to all Japanese text rendered by WORLD BRIDGE.
 (function(){
   let scheduled=false;
+  const overrides={
+    "今日は":"きょうは",
+    "入っ":"はいっ",
+    "分別":"ぶんべつ",
+    "人":"ひと",
+    "出だ":"でだ",
+    "色付":"いろつ"
+  };
+  if(window.FURIGANA_TERMS)Object.assign(window.FURIGANA_TERMS,overrides);
 
   function getEntries(){
     const map=window.FURIGANA_TERMS||{};
