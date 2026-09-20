@@ -8,7 +8,9 @@
     "分別":"ぶんべつ",
     "人":"ひと",
     "出だ":"でだ",
-    "色付":"いろつ"
+    "色付":"いろつ",
+    "音声中":"おんせいちゅう",
+    "色付き":"いろつき"
   };
   if(window.FURIGANA_TERMS)Object.assign(window.FURIGANA_TERMS,overrides);
 
