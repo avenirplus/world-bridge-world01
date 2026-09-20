@@ -1,0 +1,52 @@
+name: Generate fixed lesson audio
+
+on:
+  push:
+    paths:
+      - ".github/workflows/generate-audio.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install TTS
+        run: pip install edge-tts
+      - name: Generate fixed MP3 files
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p audio
+
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Where does our plastic go?" --write-media audio/01-entry.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Something is flying. Look!" --write-media audio/02-discover.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Some plastic goes into rivers." --write-media audio/04-river.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Rivers carry it to the ocean." --write-media audio/05-ocean.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "plastic waste" --write-media audio/07-plastic-waste.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "People produce a lot of plastic waste." --write-media audio/09-new-english.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Plastic waste can cause problems for sea animals." --write-media audio/11-target-reading.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "I think we should use fewer plastic bags because they can reduce plastic waste." --write-media audio/13-fewer-bags.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "I think we should use a reusable bottle because it can reduce plastic waste." --write-media audio/13-reusable-bottle.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "I think we should pick up litter because it can protect the environment." --write-media audio/13-pick-up-litter.mp3
+          edge-tts --voice en-US-JennyNeural --rate=-8% --text "Plastic waste can cause environmental problems, so people are trying to reduce it." --write-media audio/14-summary.mp3
+
+          edge-tts --voice ja-JP-NanamiNeural --rate=-5% --text "今日は、とてもいい天気。" --write-media audio/01-help-ja.mp3
+          edge-tts --voice ja-JP-NanamiNeural --rate=-5% --text "見て！" --write-media audio/02-help-ja.mp3
+          edge-tts --voice ja-JP-NanamiNeural --rate=-5% --text "川に入ってしまうものもあります。" --write-media audio/04-help-ja.mp3
+          edge-tts --voice ja-JP-NanamiNeural --rate=-5% --text "川はごみを海まで運びます。" --write-media audio/05-help-ja.mp3
+
+      - name: Commit audio
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audio
+          git diff --cached --quiet || git commit -m "Add fixed WORLD BRIDGE lesson audio"
+          git push
