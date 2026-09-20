@@ -14,7 +14,39 @@ vocabBridgeWords.forEach(function(v){addVariant(v.word,v.word);});
 supportWords.forEach(function(v){addVariant(v.word,v.word);});
 addVariant('mistake plastic for food','mistake A for B');addVariant('citizens','citizen');addVariant('governments','government');addVariant('businesses','business');addVariant('customers','customer');addVariant('products','product');addVariant('containers','container');addVariant('pieces','piece');addVariant('rules','rule');addVariant('reaches','reach');addVariant('collected','collect');addVariant('thrown away','throw away');
 const supportVariants=Object.keys(variantMap).sort(function(a,b){return b.length-a.length;});
-vocabBridgeDecorate=function(text){let out=text;supportVariants.forEach(function(variant){const canonical=variantMap[variant];const v=vocabBridgeFind(canonical);if(!v)return;const core=vocabBridgeWords.some(function(x){return x.word===canonical;});const cls=core?'vocab-inline':'vocab-inline support-inline';[variant,variant.charAt(0).toUpperCase()+variant.slice(1)].forEach(function(form){out=out.split(form).join('<button class="'+cls+'" onclick="vocabBridgeTip(\''+canonical.replace(/'/g,"\\'")+'\')">'+form+'</button>');});});return out;};
+vocabBridgeDecorate=function(text){
+  let out="";
+  let pos=0;
+  const lower=text.toLowerCase();
+  while(pos<text.length){
+    let hit=null;
+    for(const variant of supportVariants){
+      if(lower.startsWith(variant.toLowerCase(),pos)){
+        hit=variant;
+        break;
+      }
+    }
+    if(!hit){
+      out+=text[pos];
+      pos++;
+      continue;
+    }
+    const shown=text.slice(pos,pos+hit.length);
+    const canonical=variantMap[hit];
+    const v=vocabBridgeFind(canonical);
+    if(!v){
+      out+=shown;
+      pos+=hit.length;
+      continue;
+    }
+    const core=vocabBridgeWords.some(function(x){return x.word===canonical;});
+    const cls=core?"vocab-inline":"vocab-inline support-inline";
+    out+='<button class="'+cls+'" onclick="vocabBridgeTip(\''+canonical.replace(/'/g,"\\'")+'\')">'+shown+'</button>';
+    pos+=hit.length;
+  }
+  return out;
+};
+
 vocabBridgeTip=function(word){const v=vocabBridgeFind(word);if(!v)return;let box=document.getElementById('vocabTip');if(!box){box=document.createElement('div');box.id='vocabTip';box.className='vocab-tip';document.body.appendChild(box);}const isCore=vocabBridgeWords.some(function(x){return x.word===word;});box.innerHTML='<button class="tip-close" onclick="this.parentElement.remove()">×</button>'+(v.img?'<img class="tip-art" src="'+v.img+'" alt="">':'')+(v.icon?'<div class="tip-icon">'+v.icon+'</div>':'')+'<b>'+v.word+'</b><div class="tip-en">'+v.en+'</div>'+(v.defAudio?audioButton(v.defAudio,'英英定義'):'')+'<div class="tip-ja">'+v.ja+'</div>'+(v.example?'<div class="easy-example">'+v.example+'</div>':'')+(v.exampleAudio?audioButton(v.exampleAudio,'例文'):'')+(v.audio?audioButton(v.audio,'単語'):'')+(!isCore?'<div class="support-note">これはWord Labの中心語ではありません。読んでいて困ったときだけ確認すればOK。</div>':'');};
 function sentenceHelpHtml(index){return '<details class="sentence-help"><summary>この文の意味HELP</summary><div>'+readingJapaneseHelp[index]+'</div></details>';}
 paraReadHtml=function(u){const items=reading.slice(u.from,u.to);return '<div class="track-controls"><button class="listen" onclick="playSequence(reading.slice('+u.from+','+u.to+'),\'p'+u.n+'\',0.8)">▶ 0.8×</button><button class="listen secondary-listen" onclick="playSequence(reading.slice('+u.from+','+u.to+'),\'p'+u.n+'\',1)">▶ 1.0×</button></div><div class="help-key"><span class="key-core">黄</span> Word Labで学んだ語　<span class="key-support">青</span> 困ったら確認する語</div><div class="track-list">'+items.map(function(x,i){const idx=u.from+i;return '<div class="sentence-block"><div class="track-line reading-line" data-track="p'+u.n+i+'"><button class="line-audio" onclick="playOne(\''+x.audio+'\',\'p'+u.n+i+'\',0.9)">🔊</button><span>'+vocabBridgeDecorate(x.text)+'</span></div>'+sentenceHelpHtml(idx)+'</div>';}).join('')+'</div><p class="bridge-note">分からない語はタップ。文全体が読めないときは「この文の意味HELP」を開いてから、もう一度英語へ戻ります。</p>';};
