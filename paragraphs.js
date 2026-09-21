@@ -104,12 +104,13 @@ function paraReadHtml(u){
 
 function paraCompHtml(u){
   return u.q.map(function(q,qi){
+    const opts=shuffledChoices(q.choices,q.correct);
     return '<div class="qcard">'+
       '<div class="qtext">'+q.q+'</div>'+
       '<button class="hint-btn" onclick="paraHint(this)">ヒントを見る</button>'+
       '<div class="hint" hidden>'+q.hint+'</div>'+
-      '<div class="choices">'+q.choices.map(function(x,i){
-        return '<button class="choice" onclick="paraAnswer(this,'+i+','+q.correct+','+JSON.stringify(q.evidence)+','+JSON.stringify(q.explain)+')">'+x+'</button>';
+      '<div class="choices">'+opts.map(function(o){
+        return '<button class="choice" onclick="paraAnswer(this,'+o.ok+','+JSON.stringify(q.evidence)+','+JSON.stringify(q.explain)+')">'+o.text+'</button>';
       }).join("")+'</div>'+
       '<div class="feedback" hidden></div>'+
     '</div>';
@@ -120,13 +121,13 @@ function paraHint(btn){
   const h=btn.nextElementSibling;
   if(h)h.hidden=!h.hidden;
 }
-function paraAnswer(el,i,correct,evidence,explain){
+function paraAnswer(el,ok,evidence,explain){
   const box=el.closest(".qcard");
   box.querySelectorAll(".choice").forEach(function(x){x.classList.remove("correct","wrong");});
-  el.classList.add(i===correct?"correct":"wrong");
+  el.classList.add(ok?"correct":"wrong");
   const f=box.querySelector(".feedback");
   f.hidden=false;
-  f.innerHTML=(i===correct?"<b>正解。</b> ":"<b>もう一度本文へ。</b> ")+explain+
+  f.innerHTML=(ok?"<b>正解。</b> ":"<b>もう一度本文へ。</b> ")+explain+
     '<div class="evidence"><span>本文の根拠</span>'+evidence+'</div>';
 }
 
