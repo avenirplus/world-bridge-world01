@@ -44,7 +44,7 @@ function vocabBridgeLabHtml(){
       '<div class="vocab-word">'+v.word+'</div>'+
       '<div class="vocab-context">'+v.context+'</div>'+
       '<div class="small">絵と文から、まず意味を予想</div>'+
-      '<div class="choices">'+v.choices.map(function(x,i){return '<button class="choice" onclick="vocabBridgeGuess(this,'+i+','+v.correct+')">'+x+'</button>';}).join('')+'</div>'+
+      '<div class="choices">'+shuffledChoices(v.choices,v.correct).map(function(o){return '<button class="choice" onclick="vocabBridgeGuess(this,'+o.ok+')">'+o.text+'</button>';}).join('')+'</div>'+
       '<div class="vocab-reveal" id="vocabReveal" hidden>'+
         '<div class="def-label">Easy English</div><div class="def-en">'+v.en+'</div>'+
         '<div class="def-label">日本語</div><div class="def-ja">'+v.ja+'</div>'+
@@ -57,9 +57,9 @@ function vocabBridgeLabHtml(){
     '</div>';
 }
 
-function vocabBridgeGuess(el,i,correct){
+function vocabBridgeGuess(el,ok){
   el.parentElement.querySelectorAll('.choice').forEach(function(x){x.classList.remove('correct','wrong');});
-  el.classList.add(i===correct?'correct':'wrong');
+  el.classList.add(ok?'correct':'wrong');
   const r=document.getElementById('vocabReveal');
   if(r)r.hidden=false;
 }
@@ -79,7 +79,7 @@ function vocabBridgeCheckHtml(){
     {q:'市民・国民',a:'citizen',opts:['harm','waste','citizen']}
   ];
   return '<div class="vocab-check-note">定義 → 単語を思い出す。本文へ進む前の最終確認です。</div>'+checks.map(function(q){
-    return '<div class="qcard"><div class="qtext">'+q.q+'</div><div class="choices">'+q.opts.map(function(x){
+    return '<div class="qcard"><div class="qtext">'+q.q+'</div><div class="choices">'+shuffleArray(q.opts).map(function(x){
       const safeX=x.replace(/'/g,"\\'");
       const safeA=q.a.replace(/'/g,"\\'");
       return '<button class="choice" onclick="vocabBridgeRecall(this,\''+safeX+'\',\''+safeA+'\')">'+x+'</button>';
