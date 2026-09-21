@@ -136,18 +136,33 @@ function playSequence(items,prefix,rate){
   next();
 }
 
+function shuffleArray(items){
+  const a=items.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function shuffledChoices(choices,correct){
+  return shuffleArray(choices.map(function(text,i){
+    return {text:text,ok:i===correct};
+  }));
+}
+
 function htmlChoices(s){
   if(!s.choices)return "";
-  return '<div class="choices">'+s.choices.map(function(x,i){
-    return '<button class="choice" onclick="answerSimple(this,'+i+','+s.correct+')">'+x+'</button>';
+  const opts=shuffledChoices(s.choices,s.correct);
+  return '<div class="choices">'+opts.map(function(o){
+    return '<button class="choice" onclick="answerSimple(this,'+o.ok+')">'+o.text+'</button>';
   }).join("")+'</div>';
 }
 
-function answerSimple(el,i,correct){
+function answerSimple(el,ok){
   const box=el.parentElement;
   box.querySelectorAll(".choice").forEach(function(x){x.classList.remove("selected","correct","wrong");});
   el.classList.add("selected");
-  el.classList.add(i===correct?"correct":"wrong");
+  el.classList.add(ok?"correct":"wrong");
 }
 
 function storyboardHtml(){
@@ -191,12 +206,13 @@ function fullReadingHtml(){
 
 function guidedQuestionsHtml(qs){
   return qs.map(function(q,qi){
+    const opts=shuffledChoices(q.choices,q.correct);
     return '<div class="qcard">'+
       '<div class="qtext">'+q.q+'</div>'+
       '<button class="hint-btn" onclick="toggleHint('+qi+')">ヒントを見る</button>'+
       '<div class="hint" id="hint'+qi+'" hidden>'+q.hint+'</div>'+
-      '<div class="choices">'+q.choices.map(function(x,i){
-        return '<button class="choice" onclick="answerGuided(this,'+qi+','+i+','+q.correct+')">'+x+'</button>';
+      '<div class="choices">'+opts.map(function(o){
+        return '<button class="choice" onclick="answerGuided(this,'+qi+','+o.ok+')">'+o.text+'</button>';
       }).join("")+'</div>'+
       '<div class="feedback" id="feedback'+qi+'" hidden></div>'+
     '</div>';
@@ -208,14 +224,14 @@ function toggleHint(qi){
   if(h)h.hidden=!h.hidden;
 }
 
-function answerGuided(el,qi,i,correct){
+function answerGuided(el,qi,ok){
   const box=el.closest(".qcard");
   box.querySelectorAll(".choice").forEach(function(x){x.classList.remove("correct","wrong");});
-  el.classList.add(i===correct?"correct":"wrong");
+  el.classList.add(ok?"correct":"wrong");
   const q=screens[page].guidedQuestions[qi];
   const f=document.getElementById("feedback"+qi);
   f.hidden=false;
-  f.innerHTML=(i===correct?'<b>正解。</b> ':'<b>もう一度。</b> ')+
+  f.innerHTML=(ok?'<b>正解。</b> ':'<b>もう一度。</b> ')+
     q.explain+'<div class="evidence"><span>根拠</span>'+q.evidence+'</div>';
 }
 
@@ -260,9 +276,11 @@ function logicHtml(){
     '</div>'+
     '<div class="language-skill"><b>国語の読み方</b><p><strong>However</strong> は「話の向きが変わる」サイン。<br>最後の文は、文章全体をまとめる結論になりやすい。</p></div>'+
     '<div class="qcard"><div class="qtext">第2段落の主な役割は？</div><div class="choices">'+
-      '<button class="choice" onclick="answerLogic(this,false)">新しい問題を出す</button>'+
-      '<button class="choice" onclick="answerLogic(this,true)">政府の対策を説明する</button>'+
-      '<button class="choice" onclick="answerLogic(this,false)">海の動物の種類を説明する</button>'+
+      shuffleArray([
+        {t:'新しい問題を出す',ok:false},
+        {t:'政府の対策を説明する',ok:true},
+        {t:'海の動物の種類を説明する',ok:false}
+      ]).map(function(o){return '<button class="choice" onclick="answerLogic(this,'+o.ok+')">'+o.t+'</button>';}).join('')+
     '</div><div class="feedback" id="logicFeedback" hidden></div></div>';
 }
 
@@ -284,7 +302,7 @@ function summaryPrepHtml(){
     {t:"Rivers are longer than roads.",ok:false}
   ];
   return '<div class="summary-step"><b>STEP 1</b> 要約に残す「大事な3つ」を選ぶ。</div>'+
-    '<div class="main-points">'+points.map(function(p){
+    '<div class="main-points">'+shuffleArray(points).map(function(p){
       return '<button class="main-point" onclick="pickMain(this,'+p.ok+')">'+p.t+'</button>';
     }).join("")+'</div>'+
     '<div class="summary-step"><b>STEP 2</b> 3本柱を順番にする。</div>'+
